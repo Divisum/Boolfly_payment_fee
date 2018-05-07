@@ -23,9 +23,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * Constructor
      */
     public function __construct(
+        \Magento\Framework\Serialize\Serializer\Json $serialize,
         \Magento\Framework\App\Helper\Context $context
     )
     {
+        $this->serialize = $serialize;
         parent::__construct($context);
         $this->_getMethodFee();
     }
@@ -38,7 +40,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
         if (is_null($this->methodFee)) {
             $initialFees = $this->getConfig('fee');
-            $fees = is_array($initialFees) ? $initialFees : unserialize($initialFees);
+            $fees = is_array($initialFees) ? $initialFees : $this->serialize->unserialize($initialFees);
             if(is_array($fees)) {
                 foreach ($fees as $fee) {
                     $this->methodFee[$fee['payment_method']] = array(
